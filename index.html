@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航网</title>
+    <link rel="icon" href="img/favicon.ico">
+    <style>
+        /* ===== base ===== */
+        html {
+            line-height: 1.15;
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+            font-family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif';
+        }
+        body { margin: 0; }
+        a { text-decoration: none; -webkit-tap-highlight-color: transparent; }
+        table, td, th { border: none; }
+        table {
+            width: 100%;
+            display: table;
+            border-collapse: collapse;
+            border-spacing: 0;
+            border-radius: 20px;
+            margin-top: 5rem;
+            margin-bottom: 3rem;
+        }
+        p { padding: 0; margin: 0; }
+        tr { border-bottom: 1px solid rgba(0, 0, 0, .12); }
+        td, th {
+            padding: 15px 2.5rem;
+            display: table-cell;
+            text-align: left;
+            vertical-align: middle;
+            border-radius: 2px;
+        }
+
+        /* ===== link.css ===== */
+        body { margin: 0 auto; }
+        table { margin-top: 5%; width: 80%; margin: 0 auto; }
+        tr:hover { background: #fafafa; }
+        tr {
+            color: rgba(0, 0, 0, 0.88);
+            text-align: start;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s ease;
+        }
+        .container .link {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        .striped .list tr:hover { background: #fafafa; }
+        .striped .list tr { background: #fff; border-bottom: 1px solid #f0f0f0; }
+        .striped {
+            position: relative;
+            max-width: 800px;
+            border-radius: 0;
+            border: 1px solid #f0f0f0;
+            z-index: 100;
+        }
+
+        /* ===== 页面样式 ===== */
+        html, body { height: 100%; }
+        .logoss {
+            display: block;
+            margin: 10px auto;
+            width: 149px;
+        }
+        .container {
+            padding-top: 2rem;
+            position: relative;
+            min-height: calc(100% - 45px);
+            box-sizing: border-box;
+        }
+        .ssimg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+            z-index: -1;
+        }
+        .footer {
+            width: 100%;
+            height: 45px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 45px;
+            color: #fff;
+            background: #1677ff;
+        }
+        .ant-button {
+            width: 200px;
+            height: 40px;
+            display: block;
+            margin: 40px auto;
+            color: #fff;
+            background: #1677ff;
+            box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+            outline: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .latency span { color: #666; font-size: 14px; }
+
+        /* ===== 应用模块 ===== */
+        .app-modules {
+            max-width: 800px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 0 20px;
+        }
+        .app-module {
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .app-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 14px;
+            object-fit: cover;
+        }
+        .app-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .app-btn {
+            padding: 10px 48px;
+            border: 1px solid #1677ff;
+            background: #fff;
+            color: #1677ff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        .app-btn:hover { background: #e6f4ff; }
+        .app-btn-primary {
+            background: #1677ff;
+            color: #fff;
+        }
+        .app-btn-primary:hover { background: #4096ff; }
+
+        /* ===== 弹窗 ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-box {
+            background: #fff;
+            margin: 15% auto;
+            padding: 25px 30px 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-close {
+            color: #999;
+            float: right;
+            font-size: 26px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 18px;
+            margin-top: -5px;
+        }
+        .modal-close:hover { color: #333; }
+        .modal-title {
+            margin: 0 0 25px 0;
+            font-size: 1.15em;
+            color: #333;
+            clear: both;
+        }
+        .modal-download-btn {
+            width: 100%;
+            height: 44px;
+            background: #1677ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .modal-download-btn:hover { background: #4096ff; }
+
+        /* ===== 游戏介绍 ===== */
+        .game-section {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+        .game-section-title {
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .game-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        .game-card {
+            flex: 1;
+            min-width: 220px;
+            max-width: 260px;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .game-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .game-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1677ff;
+            margin-bottom: 8px;
+        }
+        .game-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* ===== 响应式 ===== */
+        @media screen and (min-width: 700px) {
+            th, td { width: 450px; }
+            table { width: 100%; }
+        }
+        @media screen and (min-width: 100px) and (max-width: 700px) {
+            .container table { font-size: .8rem; margin-top: 1rem; margin-bottom: 3rem; }
+            td, th { padding: 1.2rem .7rem; }
+            .container .link { height: 2rem; margin: 0 !important; padding: 1rem !important; }
+            table.striped { width: 100%; max-width: 800px; }
+            .app-module { padding: 12px 15px; }
+            .app-logo { width: 64px; height: 64px; }
+            .app-btn { padding: 9px 36px; font-size: 14px; }
+            .game-card { min-width: 100%; max-width: 100%; }
+            .game-section-title { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <img class="logoss" src="img/logo-static.webp" alt="">
+
+        <!-- 应用模块 -->
+        <div class="app-modules">
+
+            <div class="app-module">
+                <img src="./static/upload/image/20250327/1743067939459295.png" class="app-logo" alt="">
+                王者APP<br>您值得信任的APP
+                <div class="app-buttons">
+                   
+                    <button class="app-btn app-btn-primary" onclick="window.open('https://iapp.hrjx1314.com/')">打开</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="link">
+            <div style="color:#999; position: relative;left:20px">王者-会员线路</div>
+      
+        </div>
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th width="20%">线路</th>
+                    <th width="60%">网址</th>
+                    <th width="20%">测速</th>
+                </tr>
+            </thead>
+            <tbody id="listBody"></tbody>
+        </table>
+        <button class="ant-button" onclick="location.reload()">再次搜索</button>
+
+        <!-- 游戏介绍 -->
+        <div class="game-section">
+            <h3 class="game-section-title">🎰 游戏介绍</h3>
+            <div class="game-cards">
+                <div class="game-card">
+                                      <div class="game-icon">
+                    <img src="./img/js.png" style="width: 20%; height: 20%; object-fit: cover; display: block; margin: 0 auto;">
+                    </div>
+                    <div class="game-name">极速系列</div>
+                    <div class="game-desc">高频快开，每分钟开奖，简单刺激。</div>
+                </div>
+                <div class="game-card">
+                                      <div class="game-icon">
+                   <img src="./img/bg1.png" style="width: 20%; height: 20%; object-fit: cover; display: block; margin: 0 auto;">
+                    </div>
+                    <div class="game-name">宾果系列</div>
+                    <div class="game-desc">使用台湾官方宾果彩作为开奖结果，公平公正！</div>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">
+                    <img src="./img/xg.png" style="width: 20%; height: 20%; object-fit: cover; display: block; margin: 0 auto;">
+                    </div>
+                    <div class="game-name">六合彩</div>
+                    <div class="game-desc">经典港彩玩法，特码、生肖、波色多种投注方式。</div>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">🍁</div>
+                    <div class="game-name">加拿大28</div>
+                    <div class="game-desc">经典加拿大28玩法！全国统一开奖，大小单双简单易玩</div>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">🏆</div>
+                    <div class="game-name">世界杯</div>
+                    <div class="game-desc">2026美加墨世界杯，火热投注中！</div>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">🪙</div>
+                    <div class="game-name">百万资金流</div>
+                    <div class="game-desc">王者APP常年备用资金百万美金，欢迎爆庄</div>
+                </div>
+
+            </div>
+        </div>
+
+        <img src="img/bg-main.webp" class="ssimg" alt="">
+    </div>
+
+    <div class="footer">
+        <a href="" target="_blank" style="color: #fff;">© 2026 Copyright</a>
+    </div>
+
+    <!-- 下载弹窗 -->
+    <div id="downloadModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h3 class="modal-title">应用下载</h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="modal-download-btn" onclick="window.open('https://www.baidu.com')">下载方式 1</button>
+                <button class="modal-download-btn" onclick="window.open('https://www.baidu.com')" style="background: #52c41a;">下载方式 2</button>
+                <button class="modal-download-btn" onclick="window.open('https://www.baidu.com')" style="background: #faad14;">下载方式 3</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 配置 =====
+        var pclist = [
+            { name: '开奖网', url: 'http://1168kai.org/' },
+            { name: '会员线路1', url: 'https://m1.hrjx1314.com' },
+            { name: '会员线路2', url: 'https://m2.hrjx1314.com' },
+            { name: '会员线路3', url: 'https://m3.hrjx1314.com' },
+            { name: '会员线路4', url: 'https://m4.hrjx1314.com' }
+
+        ];
+
+        // ===== 弹窗 =====
+        function openModal() {
+            document.getElementById('downloadModal').style.display = 'block';
+        }
+        function closeModal() {
+            document.getElementById('downloadModal').style.display = 'none';
+        }
+        window.onclick = function(e) {
+            var modal = document.getElementById('downloadModal');
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // ===== 渲染表格 =====
+        function renderTable() {
+            var tbody = document.getElementById('listBody');
+            var html = '';
+            for (var i = 0; i < pclist.length; i++) {
+                html += '<tr>' +
+                    '<td>' + pclist[i].name + '</td>' +
+                    '<td><a href="' + pclist[i].url + '" style="color: #1677ff;" target="_blank" class="url">' + pclist[i].url + '</a></td>' +
+                    '<td class="latency"><p><span id="ping' + i + '">测速中...</span></p></td>' +
+                    '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        // ===== 测速动画 =====
+        var ping = 1;
+        var time = setInterval(function() { ping++; }, 1);
+        function startPingTest() {
+            for (var i = 0; i < pclist.length; i++) {
+                (function(index) {
+                    setTimeout(function() {
+                        var span = document.getElementById('ping' + index);
+                        if (span) { span.textContent = ping + 'ms'; }
+                        if (index === pclist.length - 1) { clearInterval(time); }
+                    }, 200 + index * 300);
+                })(i);
+            }
+        }
+
+        // ===== 初始化 =====
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+            startPingTest();
+        });
+    </script>
+    <style>
+    /* 基础样式重置 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        min-height: 100vh;
+        background: url('') no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+        overflow-y: auto;
+        font-family: Arial, "Microsoft Yahei", sans-serif;
+    }
+
+    /* 右上角链接容器 */
+    .top-links {
+        position: absolute;
+        top: 3%;
+        right: 3%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        max-width: 40%;
+    }
+
+    /* 右下角客服链接 - 已修改为固定定位并垂直居中 */
+    .bottom-link {
+        position: fixed;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        animation: float 2s ease-in-out infinite;
+        z-index: 1000; /* 确保图标在所有元素上方 */
+    }
+
+    /* 图片链接通用样式 */
+    .image-link {
+        display: block;
+        transition: all 0.3s ease;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .image-link img {
+        width: 150px;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    /* 悬停效果 */
+    .image-link:hover {
+        transform: scale(1.1); /* 修正缩放值，避免过大 */
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+    }
+
+    /* 浮动动画 */
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(-50%) translateY(0);
+        }
+        50% {
+            transform: translateY(-50%) translateY(-10px);
+        }
+    }
+
+    /* 手机端适配 */
+    @media (max-width: 768px) {
+        .top-links {
+            gap: 10px;
+            max-width: 60%;
+        }
+        .bottom-link {
+            right: 10px;
+        }
+        .bottom-link img {
+            width: 100px !important;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .top-links {
+            gap: 20px;
+        }
+    }
+</style>
+    <a href="https://baofu8.cc/wz888/" class="image-link bottom-link" target="_blank">
+            <img src="./img/kefu.png" alt="在线客服！" style="width: 150px;">
+        </a>
+</body>
+</html>
